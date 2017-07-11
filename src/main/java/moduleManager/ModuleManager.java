@@ -5,22 +5,33 @@ import exceptionModule.ExceptionModuleInterface;
 import ingameModule.IngameModuleInterface;
 import loggerModule.LoggerModuleInterface;
 import networkModule.NetworkModuleInterface;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 import stateData.ClientState;
 import stateData.GameState;
 
+import javax.annotation.Resource;
 import java.awt.*;
 
+@Component
+@PropertySource("classpath:playerSettings.properties")
 public class ModuleManager implements ModuleManagerInterface {
 
-
+    @Resource
     LoggerModuleInterface loggerModule;
+    @Resource
     NetworkModuleInterface networkModule;
+    @Resource
     IngameModuleInterface ingameModule;
+    @Resource
     ExceptionModuleInterface exceptionModule;
 
+    @Autowired
+    PlayerSettings playerSettings;
 
     public void transferClientState(ClientState clientState) {
-        clientState.AddClientInfo("Noman23", new Color(59, 239, 255));
+        clientState.AddClientInfo(playerSettings.getName(), playerSettings.getColor());
         networkModule.sendClientState(clientState);
     }
 
