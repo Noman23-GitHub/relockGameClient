@@ -10,9 +10,31 @@ import java.util.List;
 public class GameState implements Serializable {
 
     // Сабкласс для описания игроков на поле
-    class Player {
+    public class Player {
         String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public Color getColor() {
+            return color;
+        }
+
+        public int getAngle() {
+            return angle;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
         Color color;
+        int angle;
         int x;
         int y;
     }
@@ -24,7 +46,19 @@ public class GameState implements Serializable {
     }
 
     // Сабкласс для описания объектов на поле
-    class GameObject {
+    public class GameObject {
+        public ObjectTypeEnum getType() {
+            return type;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
         ObjectTypeEnum type;
         int x;
         int y;
