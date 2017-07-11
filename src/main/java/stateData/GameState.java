@@ -7,7 +7,7 @@ import java.util.List;
 
 
 // Клиент-сайд гейм-инфо
-public class GameInfo implements Serializable {
+public class GameState implements Serializable {
 
     // Сабкласс для описания игроков на поле
     class Player {
