@@ -1,8 +1,11 @@
 package moduleManager;
 
+import org.springframework.stereotype.*;
+import org.springframework.stereotype.Component;
+
 import java.awt.*;
 
-
+@Component
 public class PlayerSettings {
     private String name;
     private Color color;

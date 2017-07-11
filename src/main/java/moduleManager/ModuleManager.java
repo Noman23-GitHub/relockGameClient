@@ -6,16 +6,13 @@ import ingameModule.IngameModuleInterface;
 import loggerModule.LoggerModuleInterface;
 import networkModule.NetworkModuleInterface;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import stateData.ClientState;
 import stateData.GameState;
 
 import javax.annotation.Resource;
-import java.awt.*;
 
 @Component
-@PropertySource("classpath:playerSettings.properties")
 public class ModuleManager implements ModuleManagerInterface {
 
     @Resource
