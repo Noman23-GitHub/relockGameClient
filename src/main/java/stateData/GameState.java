@@ -11,7 +11,12 @@ public class GameState implements Serializable {
 
     // Сабкласс для описания игроков на поле
     public class Player {
+
         String name;
+        private Color color;
+        private int angle;
+        private int x;
+        private int y;
 
         public String getName() {
             return name;
@@ -32,11 +37,6 @@ public class GameState implements Serializable {
         public int getY() {
             return y;
         }
-
-        Color color;
-        int angle;
-        int x;
-        int y;
     }
 
     // Перечисление типов игровых объектов
@@ -47,6 +47,11 @@ public class GameState implements Serializable {
 
     // Сабкласс для описания объектов на поле
     public class GameObject {
+
+        private ObjectTypeEnum type;
+        private int x;
+        private int y;
+
         public ObjectTypeEnum getType() {
             return type;
         }
@@ -58,11 +63,6 @@ public class GameState implements Serializable {
         public int getY() {
             return y;
         }
-
-        ObjectTypeEnum type;
-        int x;
-        int y;
-
     }
 
     // Листы с объектами
