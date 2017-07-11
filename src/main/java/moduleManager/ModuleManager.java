@@ -1,15 +1,14 @@
 package moduleManager;
 
-
 import exceptionModule.ExceptionModuleInterface;
 import ingameModule.IngameModuleInterface;
 import loggerModule.LoggerModuleInterface;
 import networkModule.NetworkModuleInterface;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import stateData.ClientState;
 import stateData.GameState;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
 @Component

@@ -1,6 +1,5 @@
 package moduleManager;
 
-import org.springframework.stereotype.*;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
@@ -13,7 +12,6 @@ public class PlayerSettings {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -21,7 +19,6 @@ public class PlayerSettings {
     public Color getColor() {
         return color;
     }
-
     public void setColor(Color color) {
         this.color = color;
     }
