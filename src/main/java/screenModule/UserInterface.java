@@ -1,64 +1,79 @@
 package screenModule;
 
+
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-import javafx.scene.shape.Arc;
-import javafx.scene.shape.Rectangle;
+import javafx.event.EventHandler;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import stateData.ClientState;
 import stateData.GameState;
-import stateData.GameState.GameObject;
-import stateData.GameState.Player;
 
-import java.util.*;
+public class UserInterface extends Application{
 
-/**
- * Created by Student on 7/11/2017.
- */
-public class UserInterface implements Application{      // еще не готово, но выглядеть будет как то так
-    private ArrayList<Arc> players;
-    private ArrayList<Rectangle> objects;
 
-    private Pane board;
+    final int up = 1, down=2, left=3, right=4;
+    GraphicsContext gc;
+    Canvas canvas;
+    Thread game;
+    private GameState gameState;
 
-    public void paint(GameState state){
+    boolean lost = false;
 
-        ArrayList<Player> playerArrayList  = GameState.getPlayerList();
 
-        players = new ArrayList<Arc>();
-        int i = 0;
-        for (Player player :playerArrayList) {
-            Arc arc = new Arc();
-            arc.setCenterX(player.getX());
-            arc.setCenterY(player.getY());
-            arc.setRadiusX(20);
-            arc.setRadiusY(20);
-            arc.setLength(270);
-            arc.setStartAngle(45+player.getAngle());
-            //arc.setStyle()                                цвет еще надо вставить
-            players.add(arc);
+    public void start(Stage primaryStage){
 
-            board.getChildren().set(i,arc);
-            i++;
-        }
+        canvas.setOnKeyPressed(new EventHandler<KeyEvent>(){
+            public void handle(KeyEvent e) {
+                KeyCode key=e.getCode();
+                if(key.equals(KeyCode.UP))createState(up, null);
+                if(key.equals(KeyCode.DOWN))createState(down, null);
+                if(key.equals(KeyCode.LEFT))createState(left, null);
+                if(key.equals(KeyCode.RIGHT))createState(right, null);
+            }
+        });
 
-        ArrayList<GameObject> objectList = GameState.getGameObjectList();
-
-        i = 0;
-        for (GameObject object :objectList) {
-            Rectangle rectangle = new Rectangle(object.getX(), object.getY(), 20, 20);
-            //rectangle.setStyle()                          тоже цвет
-            objects.add(rectangle);
-
-            board.getChildren().set(i, rectangle);
-            i++;
-        }
+        canvas.setOnMouseMoved(new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+                double[] coord = {event.getX(), event.getY()};
+                createState(0, coord);
+            }
+        });
     }
 
+    public void startGame(){
+        game = new Thread(new Runnable() {
+            public void run() {
 
-    public void start(Stage primaryStage) throws Exception {
-        final Scene scene = new Scene(board);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+                while(true){
+                    if(gameState != null){
+                        draw(gc);
+                        gameState = null;
+                    }
+                    try {
+                        Thread.sleep(50);
+                    }catch(InterruptedException ie){
+                        System.out.println(ie.getMessage());
+                        startGame();
+                    }
+                }
+            }
+        });
+        game.start();
+    }
+
+    public static void draw(GraphicsContext gc){
+
+    }
+
+    private ClientState createState(int keyDirection,double[] mouseCoordinates){
+
+        return null;
+    }
+    public void setGameState(GameState gameState){
+        this.gameState = gameState;
     }
 }
