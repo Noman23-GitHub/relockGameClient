@@ -2,10 +2,13 @@ package networkModule;
 
 import moduleManager.ModuleManagerInterface;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 import stateData.ClientState;
 import stateData.GameState;
+
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -19,15 +22,16 @@ public class NetworkModule implements NetworkModuleInterface {
     private ModuleManagerInterface moduleManager;
     @Autowired
     private NetworkSettings networkSettings;
-    @Autowired
     private TaskExecutor taskExecutor;
-    @Autowired
     private Socket socket;
     private volatile boolean isRunning = true;
     private boolean isListening = false;
 
-    public NetworkModule()
+    @PostConstruct
+    public void init()
     {
+        taskExecutor = new SimpleAsyncTaskExecutor();
+        socket = new Socket();
         startListening();
     }
     public void sendClientState(ClientState clientState) {

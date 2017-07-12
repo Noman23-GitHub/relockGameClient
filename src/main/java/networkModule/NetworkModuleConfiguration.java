@@ -5,11 +5,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
-
 import javax.annotation.Resource;
-import java.net.Socket;
+
 
 @Configuration
 @ComponentScan
@@ -32,15 +29,4 @@ public class NetworkModuleConfiguration {
         return new NetworkModule();
     }
 
-    @Bean
-    public Socket socket()
-    {
-        return  new Socket();
-    }
-
-    @Bean
-    public TaskExecutor taskExecutor()
-    {
-        return new SimpleAsyncTaskExecutor();
-    }
 }
