@@ -5,36 +5,74 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 import stateData.ClientState;
-
+import stateData.GameState;
 import javax.annotation.Resource;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+
 
 @Component
 public class NetworkModule implements NetworkModuleInterface {
 
     @Resource
-    ModuleManagerInterface moduleManager;
-
+    private ModuleManagerInterface moduleManager;
+    @Autowired
+    private NetworkSettings networkSettings;
     @Autowired
     private TaskExecutor taskExecutor;
+    @Autowired
+    private Socket socket;
+    private volatile boolean isRunning = true;
+    private boolean isListening = false;
 
+    public NetworkModule()
+    {
+        startListening();
+    }
     public void sendClientState(ClientState clientState) {
 
-    }
-
-    private void initialize()
-    {
-        ServerListeningTask serverListeningTask = new ServerListeningTask();
         try
         {
-            serverListeningTask.setSocketAddress(new InetSocketAddress(InetAddress.getLocalHost(), 5000)); //тут нужно получать реальный адресс и порт
+            socket.connect(networkSettings.getSocketAddress());
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(clientState);
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-        taskExecutor.execute(new ServerListeningTask());
+    }
+
+    public void startListening()
+    {
+        if(isListening)
+            return;
+        else
+            {
+            isListening = true;
+            taskExecutor.execute(new Runnable() {
+                public void run() {
+                    try {
+                        Socket socket = new Socket();
+                        socket.connect(networkSettings.getSocketAddress());
+                        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                        GameState gameState;
+                        while (isRunning) {
+                            gameState = (GameState) in.readObject();
+                            moduleManager.transferGameState(gameState);
+                        }
+                        socket.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+    public void killListening()
+    {
+        isRunning = false;
     }
 
 
