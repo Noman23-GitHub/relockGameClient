@@ -26,20 +26,31 @@ public class NetworkModule implements NetworkModuleInterface {
     private Socket socket;
     private volatile boolean isRunning = true;
     private boolean isListening = false;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
 
     @PostConstruct
     public void init()
     {
         taskExecutor = new SimpleAsyncTaskExecutor();
         socket = new Socket();
+        try
+        {
+            socket.connect(networkSettings.getSocketAddress());
+            out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         startListening();
     }
     public void sendClientState(ClientState clientState) {
 
         try
         {
-            socket.connect(networkSettings.getSocketAddress());
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             out.writeObject(clientState);
         }
         catch (Exception e)
@@ -57,10 +68,8 @@ public class NetworkModule implements NetworkModuleInterface {
             isListening = true;
             taskExecutor.execute(new Runnable() {
                 public void run() {
-                    try {
-                        Socket socket = new Socket();
-                        socket.connect(networkSettings.getSocketAddress());
-                        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                    try
+                    {
                         GameState gameState;
                         while (isRunning) {
                             gameState = (GameState) in.readObject();
