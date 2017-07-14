@@ -33,6 +33,16 @@ public class GameState implements Serializable {
     public Exception getServerException() {
         return serverException;
     }
+    public String toString()
+    {
+        String result = "";
+        for (Player player : playerList) {
+
+            result += player.getName() + " : " + player.getX() + " : " + player.getY();
+        }
+        return  result;
+
+    }
     //....................................................................................
 
     //....................................Сабклассы.......................................
@@ -65,6 +75,7 @@ public class GameState implements Serializable {
         public int getY() {
             return y;
         }
+
     }
 
     // Сабкласс для описания объектов на поле
@@ -93,6 +104,7 @@ public class GameState implements Serializable {
         public int getY() {
             return y;
         }
+
     }
     //....................................................................................
 }
