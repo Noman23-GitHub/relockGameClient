@@ -6,68 +6,22 @@ import java.io.Serializable;
 import java.util.List;
 
 
-// Клиент-сайд гейм-инфо
+// Сервер-сайд гейм-стейт
 public class GameState implements Serializable {
 
-    // Сабкласс для описания игроков на поле
-    public class Player {
-
-        String name;
-        private Color color;
-        private int angle;
-        private int x;
-        private int y;
-
-        public String getName() {
-            return name;
-        }
-
-        public Color getColor() {
-            return color;
-        }
-
-        public int getAngle() {
-            return angle;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-    }
-
-    // Перечисление типов игровых объектов
-    public enum ObjectTypeEnum {
-        TYPE_WALL,
-        TYPE_SPEEL
-    }
-
-    // Сабкласс для описания объектов на поле
-    public class GameObject {
-
-        private ObjectTypeEnum type;
-        private int x;
-        private int y;
-
-        public ObjectTypeEnum getType() {
-            return type;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-    }
+    //Поля////////////////////////////////////////////////////////////////////////////////////
+    private static final long serialVersionUID = 23L;
 
     // Листы с объектами
     private List<Player> playerList;
+    private List<GameObject> gameObjectList;
 
+    // Эксепшин он сервера, т.е. ошибка на сервере, но переадрессована она клиенту.
+    // Перенаправляется в обработчик ошибок, если не null офк.
+    Exception serverException;
+    //////////////////////////////////////////////////////////////////////////////////////////
+
+    //Методы////////////////////////////////////////////////////////////////////////////////////
     public List<Player> getPlayerList() {
         return playerList;
     }
@@ -79,10 +33,30 @@ public class GameState implements Serializable {
     public Exception getServerException() {
         return serverException;
     }
+    //////////////////////////////////////////////////////////////////////////////////////////
 
-    private List<GameObject> gameObjectList;
+    //Сабклассы///////////////////////////////////////////////////////////////////////////
+    public static class Player {
 
-    // Эксепшин он сервера, т.е. ошибка на сервере, но переадрессована она клиенту.
-    // Перенаправляется в обработчик ошибок, если не null офк.
-    Exception serverException;
+        String name;
+        private Color color;
+        private int angle;
+        private int x;
+        private int y;
+    }
+
+    // Сабкласс для описания объектов на поле
+    public static class GameObject {
+
+        // Перечисление типов игровых объектов
+        public enum ObjectTypeEnum {
+            TYPE_WALL,
+            TYPE_SPEEL
+        }
+
+        private ObjectTypeEnum type;
+        private int x;
+        private int y;
+    }
+    //////////////////////////////////////////////////////////////////////////////////////////
 }
