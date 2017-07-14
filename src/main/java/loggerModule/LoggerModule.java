@@ -19,7 +19,8 @@ public class LoggerModule implements LoggerModuleInterface{
         Date today = Calendar.getInstance().getTime();
         String reportDate = df.format(today);
         String giveLog = (reportDate + message + "\r");
-        try (FileWriter logWriter = new FileWriter("D:\\testlog.txt", true)) {
+        try {
+            FileWriter logWriter = new FileWriter("D:\\testlog.txt", true);
             logWriter.append('\n');
             logWriter.write(giveLog);
             logWriter.flush();
