@@ -8,7 +8,7 @@ import stateData.GameState;
 import javax.annotation.Resource;
 import javax.swing.*;
 import java.awt.*;
-import java.util.Random;
+import java.util.*;
 
 @Component
 public class IngameModule extends JFrame implements IngameModuleInterface {
@@ -38,6 +38,13 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
                 offgc.drawString(player.getName(), player.getX() + 5, player.getY() - 5);
                 offgc.setColor(player.getColor());
                 offgc.fillOval(player.getX(), player.getY(), 50, 50);
+            }
+            java.util.List<GameState.GameObject> objects = gs.getGameObjectList();
+            for (GameState.GameObject object : objects) {
+                if (object.getType() == GameState.GameObject.ObjectTypeEnum.TYPE_WALL) {
+                    offgc.setColor(new Color(140, 68, 12));
+                    offgc.fillRect(object.getX(), object.getY(), 40, 40);
+                }
             }
         }
 
