@@ -64,5 +64,10 @@ public class ClientState implements Serializable {
         CMD_SPELL_1,    // Если запущена способность 1
         CMD_SPELL_2     // Если запушена способность 2
     }
+
+    public String toString()
+    {
+        return move + " : " + name + " : " + color;
+    }
     //...............................................................
 }

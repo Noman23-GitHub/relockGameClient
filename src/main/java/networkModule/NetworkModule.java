@@ -51,7 +51,9 @@ public class NetworkModule implements NetworkModuleInterface {
 
         try
         {
+
             out.writeObject(clientState);
+            System.out.println("clientstate has been sent: " + clientState.toString());
         }
         catch (Exception e)
         {
@@ -73,6 +75,7 @@ public class NetworkModule implements NetworkModuleInterface {
                         GameState gameState;
                         while (isRunning) {
                             gameState = (GameState) in.readObject();
+                            System.out.println("gamestate has been received: " + gameState.toString());
                             moduleManager.transferGameState(gameState);
                         }
                         socket.close();

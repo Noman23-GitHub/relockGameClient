@@ -14,13 +14,13 @@ import javax.annotation.Resource;
 @Component
 public class ModuleManager implements ModuleManagerInterface {
 
-    @Resource
+    //@Resource
     LoggerModuleInterface loggerModule;
     @Resource
     NetworkModuleInterface networkModule;
-    @Resource
+    //@Resource
     IngameModuleInterface ingameModule;
-    @Resource
+    //@Resource
     ExceptionModuleInterface exceptionModule;
 
     @Autowired
@@ -32,11 +32,11 @@ public class ModuleManager implements ModuleManagerInterface {
     }
 
     public void transferGameState(GameState gameState) {
-        if (gameState.getServerException() == null) {
+        /*if (gameState.getServerException() == null) {
             ingameModule.setGameState(gameState);
         } else {
             exceptionModule.setServerException(gameState.getServerException());
-        }
+        }*/
     }
 
     public void transferLocalException(Exception exception) {
