@@ -23,11 +23,19 @@ public class ClientState implements Serializable {
     private int[] m_pos;
 
     //  Данные игрока
-    String name;    // Имя игрока
-    Color color;    // Цвет игрока
+    private String name;    // Имя игрока
+    private Color color;    // Цвет игрока
     //...................................................................
 
     //........................Методы......................................
+    public ClientState(byte move, CmdTypeEnum cmd, int[] m_pos, String name, Color color) {
+        this.move = move;
+        this.cmd = cmd;
+        this.m_pos = m_pos;
+        this.name = name;
+        this.color = color;
+    }
+
     public ClientState(byte move, CmdTypeEnum cmd, int[] m_pos) {
         this.move = move;
         this.cmd = cmd;
