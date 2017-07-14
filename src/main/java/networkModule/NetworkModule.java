@@ -22,6 +22,7 @@ public class NetworkModule implements NetworkModuleInterface {
     private ModuleManagerInterface moduleManager;
     @Autowired
     private NetworkSettings networkSettings;
+
     private TaskExecutor taskExecutor;
     private Socket socket;
     private volatile boolean isRunning = true;
