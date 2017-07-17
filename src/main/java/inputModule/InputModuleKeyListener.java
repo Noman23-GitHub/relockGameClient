@@ -8,11 +8,11 @@ import java.io.IOException;
 
 import static java.awt.event.KeyEvent.*;
 
-public class InputModuleKeyListner implements KeyListener {
+public class InputModuleKeyListener implements KeyListener {
 
     InputModuleInterface inputModule;
 
-    public InputModuleKeyListner(InputModuleInterface inputModule) {
+    public InputModuleKeyListener(InputModuleInterface inputModule) {
         this.inputModule = inputModule;
     }
 
@@ -39,6 +39,11 @@ public class InputModuleKeyListner implements KeyListener {
                 move = (byte) (move | ClientState.MoveType.MOVE_RIGHT);
                 inputModule.sendClientState(move, ClientState.CmdTypeEnum.СMD_NONE, new int[]{0, 0});
                 break;
+            case VK_Q:
+                inputModule.commandCalled(ClientState.CmdTypeEnum.CMD_SPELL_1);
+                break;
+            case VK_E:
+                inputModule.commandCalled(ClientState.CmdTypeEnum.CMD_SPELL_2);
         }
     }
 
@@ -59,6 +64,12 @@ public class InputModuleKeyListner implements KeyListener {
             case VK_D:
                 move = (byte) (move & ~ClientState.MoveType.MOVE_RIGHT);
                 inputModule.sendClientState(move, ClientState.CmdTypeEnum.СMD_NONE, new int[]{0, 0});
+                break;
+            case VK_Q:
+                inputModule.commandWithdrawn();
+                break;
+            case VK_E:
+                inputModule.commandWithdrawn();
                 break;
         }
     }

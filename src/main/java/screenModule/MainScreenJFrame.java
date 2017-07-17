@@ -1,5 +1,7 @@
 package screenModule;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -9,6 +11,9 @@ public class MainScreenJFrame extends JFrame {
     Graphics2D drawer;
     Image screenImage;
 
+    @Autowired
+    ScreenSettings screenSettings;
+
     public void setScreenImage(Image screenImage) {
         this.screenImage = screenImage;
     }
@@ -16,7 +21,7 @@ public class MainScreenJFrame extends JFrame {
     public MainScreenJFrame() {
         super("Game");
 
-        setSize(800, 600);
+        setSize(screenSettings.getWidth(), screenSettings.getHeigh());
         setVisible(true);
     }
 
