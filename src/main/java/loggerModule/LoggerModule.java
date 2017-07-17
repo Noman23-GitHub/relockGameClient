@@ -1,7 +1,9 @@
 package loggerModule;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -12,7 +14,10 @@ import java.util.Date;
 @Component
 public class LoggerModule implements LoggerModuleInterface{
 
-    DateFormat df = new SimpleDateFormat("[HH:mm:ss] dd.MM.yyyy ");
+    @Autowired
+    LoggerSettings loggerSettings;
+
+    DateFormat df = new SimpleDateFormat(loggerSettings.getDateFormat());
 
     public void logMessage(String message) {
 
@@ -20,7 +25,7 @@ public class LoggerModule implements LoggerModuleInterface{
         String reportDate = df.format(today);
         String giveLog = (reportDate + message + "\r");
         try {
-            FileWriter logWriter = new FileWriter("D:\\testlog.txt", true);
+            FileWriter logWriter = new FileWriter(loggerSettings.getFileName(), true);
             logWriter.append('\n');
             logWriter.write(giveLog);
             logWriter.flush();
