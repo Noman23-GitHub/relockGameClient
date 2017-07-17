@@ -7,4 +7,6 @@ import stateData.ClientState;
  */
 public interface InputModuleInterface {
     public void sendClientState(byte move, ClientState.CmdTypeEnum cmd, int m_pos[]);
+    public void commandCalled(ClientState.CmdTypeEnum cmd);
+    public void commandWithdrawn();
 }
