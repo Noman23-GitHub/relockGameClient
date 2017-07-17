@@ -81,11 +81,22 @@ public class GameState implements Serializable {
         private ObjectTypeEnum type;
         private int x;
         private int y;
+        private int width;
+        private int heigth;
+
+
 
         public ObjectTypeEnum getType() {
             return type;
         }
 
+        public int getWidth() {
+            return width;
+        }
+
+        public int getHeigth() {
+            return heigth;
+        }
         public int getX() {
             return x;
         }
@@ -93,6 +104,7 @@ public class GameState implements Serializable {
         public int getY() {
             return y;
         }
+
     }
     //....................................................................................
 }
