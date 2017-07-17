@@ -2,39 +2,91 @@ package networkModule;
 
 import moduleManager.ModuleManagerInterface;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 import stateData.ClientState;
+import stateData.GameState;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+
 
 @Component
 public class NetworkModule implements NetworkModuleInterface {
 
     @Resource
-    ModuleManagerInterface moduleManager;
-
+    private ModuleManagerInterface moduleManager;
     @Autowired
+    private NetworkSettings networkSettings;
+
     private TaskExecutor taskExecutor;
+    private Socket socket;
+    private volatile boolean isRunning = true;
+    private boolean isListening = false;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
 
-    public void sendClientState(ClientState clientState) {
-
-    }
-
-    private void initialize()
+    @PostConstruct
+    public void init()
     {
-        ServerListeningTask serverListeningTask = new ServerListeningTask();
+        taskExecutor = new SimpleAsyncTaskExecutor();
+        socket = new Socket();
         try
         {
-            serverListeningTask.setSocketAddress(new InetSocketAddress(InetAddress.getLocalHost(), 5000)); //тут нужно получать реальный адресс и порт
+            socket.connect(networkSettings.getSocketAddress());
+            out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
+
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-        taskExecutor.execute(new ServerListeningTask());
+        startListening();
+    }
+    public void sendClientState(ClientState clientState) {
+
+        try
+        {
+            out.writeObject(clientState);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void startListening()
+    {
+        if(isListening)
+            return;
+        else
+            {
+            isListening = true;
+            taskExecutor.execute(new Runnable() {
+                public void run() {
+                    try
+                    {
+                        GameState gameState;
+                        while (isRunning) {
+                            gameState = (GameState) in.readObject();
+                            moduleManager.transferGameState(gameState);
+                        }
+                        socket.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+    public void killListening()
+    {
+        isRunning = false;
     }
 
 

@@ -5,17 +5,11 @@ import java.awt.*;
 import java.io.Serializable;
 
 
-// Клиент-сайд слиент-инфо
+// Сервер-сайд клиент-стейт
 public class ClientState implements Serializable {
 
-    // Статичный сабкласс для описания нажатых клавиш перемещения.
-    static class MoveType {
-        final static byte MOVE_NONE = 0;
-        final static byte MOVE_UP = 1;
-        final static byte MOVE_DOWN = 2;
-        final static byte MOVE_LEFT = 4;
-        final static byte MOVE_RIGHT = 8;
-    }
+    //...........................Поля......................................
+    private static final long serialVersionUID = 24L;
 
     // Переменная перемешения
     // Имеет размер байт
@@ -23,23 +17,24 @@ public class ClientState implements Serializable {
     // move = MoveType.MOVE_UP | MoveType.MOVE_LEFT;
     private byte move;
 
-
-    // Команды игрока к серверу
-    public static enum CmdTypeEnum {
-        СMD_NONE,       // Если нажаты только клавиши управления
-        CMD_SPELL_1,    // Если запущена способность 1
-        CMD_SPELL_2     // Если запушена способность 2
-    }
-
-    ;
     private CmdTypeEnum cmd;
 
     // Положение мыши m_pos = {x,y}
     private int[] m_pos;
 
     //  Данные игрока
-    String name;    // Имя игрока
-    Color color;    // Цвет игрока
+    private String name;    // Имя игрока
+    private Color color;    // Цвет игрока
+    //...................................................................
+
+    //........................Методы......................................
+    public ClientState(byte move, CmdTypeEnum cmd, int[] m_pos, String name, Color color) {
+        this.move = move;
+        this.cmd = cmd;
+        this.m_pos = m_pos;
+        this.name = name;
+        this.color = color;
+    }
 
     public ClientState(byte move, CmdTypeEnum cmd, int[] m_pos) {
         this.move = move;
@@ -51,4 +46,23 @@ public class ClientState implements Serializable {
         this.name = name;
         this.color = color;
     }
+    //...............................................................
+
+    //.........................Сабклассы.............................
+    // Статичный сабкласс для описания нажатых клавиш перемещения.
+    public static class MoveType {
+        public final static byte MOVE_NONE = 0;
+        public final static byte MOVE_UP = 1;
+        public final static byte MOVE_DOWN = 2;
+        public final static byte MOVE_LEFT = 4;
+        public final static byte MOVE_RIGHT = 8;
+    }
+
+    // Команды игрока к серверу
+    public enum CmdTypeEnum {
+        СMD_NONE,       // Если нажаты только клавиши управления
+        CMD_SPELL_1,    // Если запущена способность 1
+        CMD_SPELL_2     // Если запушена способность 2
+    }
+    //...............................................................
 }
