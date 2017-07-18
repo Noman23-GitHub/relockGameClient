@@ -60,7 +60,7 @@ public class ClientState implements Serializable {
 
     // Команды игрока к серверу
     public enum CmdTypeEnum {
-        СMD_NONE,       // Если нажаты только клавиши управления
+        CMD_NONE,       // Если нажаты только клавиши управления
         CMD_SPELL_1,    // Если запущена способность 1
         CMD_SPELL_2     // Если запушена способность 2
     }

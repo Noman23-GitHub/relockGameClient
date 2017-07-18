@@ -11,7 +11,6 @@ import javax.annotation.Resource;
 
 @Configuration
 @ComponentScan
-@EnableScheduling
 @PropertySource("classpath:windowSetting.properties")
 public class ScreenModuleConfiguration {
 
@@ -22,9 +21,9 @@ public class ScreenModuleConfiguration {
     public ScreenSettings screenSettings(){
 
         int width = Integer.parseInt(environment.getProperty("window.width"));
-        int heigh = Integer.parseInt(environment.getProperty("window.heigh"));
+        int height = Integer.parseInt(environment.getProperty("window.height"));
 
-        return new ScreenSettings(width, heigh);
+        return new ScreenSettings(width, height);
     }
     @Bean
     public ScreenModule screenModule() {

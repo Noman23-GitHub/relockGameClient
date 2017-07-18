@@ -9,4 +9,6 @@ public interface ModuleManagerInterface {
     public void transferGameState(GameState gameState);
     public void transferLocalException(Exception exception);
     public void transferLogMessage(String message);
+
+    public void sendSelectedSkill(ClientState.CmdTypeEnum selectedSkill);
 }

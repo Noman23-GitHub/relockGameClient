@@ -11,17 +11,16 @@ public class MainScreenJFrame extends JFrame {
     Graphics2D drawer;
     Image screenImage;
 
-    @Autowired
     ScreenSettings screenSettings;
 
     public void setScreenImage(Image screenImage) {
         this.screenImage = screenImage;
     }
 
-    public MainScreenJFrame() {
+    public MainScreenJFrame(ScreenSettings screenSettings) {
         super("Game");
 
-        setSize(screenSettings.getWidth(), screenSettings.getHeigh());
+        setSize(screenSettings.getWidth(), screenSettings.getHeight());
         setVisible(true);
     }
 

@@ -6,24 +6,26 @@ import org.springframework.stereotype.Component;
 public class ScreenSettings {
 
     private int width;
-    private int heigh;
+    private int height;
 
     public int getWidth(){
         return width;
     }
-    public int getHeigh(){
-        return heigh;
+
+    public int getHeight() {
+        return height;
     }
 
     public void setWidth(int width){
         this.width = width;
     }
-    public void setHeigh(int heigh){
-        this.heigh = heigh;
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 
-    public ScreenSettings(int width, int heigh){
+    public ScreenSettings(int width, int height) {
         this.width = width;
-        this.heigh = heigh;
+        this.height = height;
     }
 }

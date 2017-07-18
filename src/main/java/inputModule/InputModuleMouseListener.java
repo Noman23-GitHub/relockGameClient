@@ -15,16 +15,9 @@ public class InputModuleMouseListener implements MouseListener {
     InputModuleInterface inputModule;
     public InputModuleMouseListener(InputModule inputModule) { this.inputModule = inputModule; }
 
-    private ClientState.CmdTypeEnum cmd = ClientState.CmdTypeEnum.СMD_NONE;
-
-    public void commandCalled(ClientState.CmdTypeEnum cmd){this.cmd = cmd;}
-
-    public void commandWithdrawn(){ this.cmd = ClientState.CmdTypeEnum.СMD_NONE; }
-
     public void mouseClicked(MouseEvent e) {
-        if( !cmd.equals(ClientState.CmdTypeEnum.СMD_NONE )){
-            int[] mouse_pos = {e.getX(), e.getY()};
-            inputModule.sendClientState((byte)0, cmd, mouse_pos);
+        if (e.getButton() == 1) {
+            inputModule.sendMouseClick(new int[]{e.getX(), e.getY()});
         }
     }
 

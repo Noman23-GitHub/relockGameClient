@@ -48,4 +48,8 @@ public class ModuleManager implements ModuleManagerInterface {
     public void transferLogMessage(String message) {
         //loggerModule.logMessage(message);
     }
+
+    public void sendSelectedSkill(ClientState.CmdTypeEnum selectedSkill) {
+        ingameModule.setSelectedSkill(selectedSkill);
+    }
 }

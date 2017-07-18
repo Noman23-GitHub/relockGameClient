@@ -17,22 +17,38 @@ public class InputModule implements InputModuleInterface {
     @Resource
     ScreenModuleInterface screenModule;
 
-    private InputModuleMouseListener mouseListener;
+    InputModuleMouseListener mouseListener;
+
+
+    ClientState.CmdTypeEnum selectedSkill = ClientState.CmdTypeEnum.CMD_NONE;
+
+    byte move = 0;
+
+    public ClientState.CmdTypeEnum getSelectedSkill() {
+        return selectedSkill;
+    }
 
     @PostConstruct
     public void init() {
-        moduleManager.transferClientState(new ClientState((byte) 0, ClientState.CmdTypeEnum.СMD_NONE, new int[]{0, 0}));
+        moduleManager.transferClientState(new ClientState((byte) 0, ClientState.CmdTypeEnum.CMD_NONE, new int[]{0, 0}));
         screenModule.getJFrame().addKeyListener(new InputModuleKeyListener(this));
         screenModule.getJFrame().addMouseListener(mouseListener = new InputModuleMouseListener(this));
     }
 
     public void sendClientState(byte move, ClientState.CmdTypeEnum cmd, int m_pos[]) {
+        this.move = move;
         moduleManager.transferClientState(new ClientState(move, cmd, m_pos));
     }
-    public void commandCalled(ClientState.CmdTypeEnum cmd){
-        mouseListener.commandCalled(cmd);
+
+    public void sendMouseClick(int m_pos[]) {
+        if (selectedSkill != ClientState.CmdTypeEnum.CMD_NONE) {
+            moduleManager.transferClientState(new ClientState(move, selectedSkill, m_pos));
+            selectKeyPressed(ClientState.CmdTypeEnum.CMD_NONE);
+        }
     }
-    public void commandWithdrawn(){
-        mouseListener.commandWithdrawn();
+
+    public void selectKeyPressed(ClientState.CmdTypeEnum selectedSkill) {
+        this.selectedSkill = selectedSkill;
+        moduleManager.sendSelectedSkill(selectedSkill);
     }
 }
