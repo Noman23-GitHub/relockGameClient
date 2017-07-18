@@ -157,6 +157,7 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
                         offgc.setColor(new Color(205, 205, 205));
                         offgc.drawString(player.name, player.x + 5, player.y - 5);
                     }
+                    render++;
             }
         }
         screenModule.updateScreen(frame);
