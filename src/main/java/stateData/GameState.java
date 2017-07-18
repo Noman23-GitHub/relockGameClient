@@ -12,6 +12,7 @@ public class GameState implements Serializable {
     //....................................Поля............................................
     private static final long serialVersionUID = 23L;
 
+    private int playerID;
     // Листы с объектами
     private List<Player> playerList;
     private List<GameObject> gameObjectList;
@@ -22,6 +23,10 @@ public class GameState implements Serializable {
     //....................................................................................
 
     //.....................................Методы.........................................
+    public int getPlayerID() {
+        return playerID;
+    }
+
     public List<Player> getPlayerList() {
         return playerList;
     }
@@ -40,11 +45,17 @@ public class GameState implements Serializable {
 
         private static final long serialVersionUID = 25L;
 
+        int playerID;
         String name;
         private Color color;
         private int angle;
         private int x;
         private int y;
+
+
+        public int getPlayerID() {
+            return playerID;
+        }
 
         public String getName() {
             return name;
