@@ -24,6 +24,12 @@ public class IngameModuleConfiguration {
 
     @Bean
     public IngameSettings ingameSettings() {
-        return new IngameSettings(Integer.parseInt(environment.getProperty("ingame.fps")));
+        return new IngameSettings(Integer.parseInt(environment.getProperty("ingame.fps")),
+                Integer.parseInt(environment.getProperty("ingame.view.top")),
+                Integer.parseInt(environment.getProperty("ingame.view.down")),
+                Integer.parseInt(environment.getProperty("ingame.view.left")),
+                Integer.parseInt(environment.getProperty("ingame.view.right")),
+                Integer.parseInt(environment.getProperty("ingame.field.size.x")),
+                Integer.parseInt(environment.getProperty("ingame.field.size.y")));
     }
 }
