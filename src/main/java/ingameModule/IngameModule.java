@@ -11,7 +11,11 @@ import stateData.GameState;
 import javax.annotation.Resource;
 import javax.swing.*;
 import java.awt.*;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class IngameModule extends JFrame implements IngameModuleInterface {
@@ -29,16 +33,14 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
     List<GameState.Player> playerList;
     List<GameState.Player> prPlayerList;
     PseudoPlayer[][] interList;
-    int deltaX;
-    int deltaY;
-    int deltaAngle;
     int render = 0;
+
     private class PseudoPlayer{
-        int x, y, angle, playerID;
+        int x, y, angle;
         Color color;
         String name;
 
-        PseudoPlayer(int x, int y, int angle, int ID, String name, Color color){this.angle = angle; this.x = x; this.y = y; this.name = name; this.playerID = ID; this.color = color; }
+        PseudoPlayer(int x, int y, int angle, String name, Color color){this.angle = angle; this.x = x; this.y = y; this.name = name; this.color = color; }
     }
 
 
@@ -53,22 +55,31 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
         previousGs = gs;
         gs = gameState;
 
+
         playerList = gs.getPlayerList();
         prPlayerList = previousGs.getPlayerList();
+        Map<Integer, GameState.Player> players = playerList.stream().collect(Collectors.toMap(GameState.Player::getPlayerID, Function.identity()));
+        Map<Integer, GameState.Player> prevPlayers = prPlayerList.stream().collect(Collectors.toMap(GameState.Player::getPlayerID, Function.identity()));
         render = 0;
         interList = new PseudoPlayer[5][gs.getPlayerList().size()];
         int j = 0;
-        for (GameState.Player player: playerList) {
-            int x, y, angle;
-            deltaX = ((x = player.getX()) - prPlayerList.get(j).getX())/7;
-            deltaY = ((y = player.getY()) - prPlayerList.get(j).getY())/7;
-            deltaAngle = (angle = player.getAngle() - prPlayerList.get(j).getAngle())/7;
+        //for (GameState.Player player: playerList) {
 
-            interList[4][j] = new PseudoPlayer(x -= deltaX, y -= deltaY, angle -= deltaAngle , player.getPlayerID(), player.getName(), player.getColor());
-            interList[3][j] = new PseudoPlayer(x -= deltaX, y -= deltaY, angle -= deltaAngle , player.getPlayerID(), player.getName(), player.getColor());
-            interList[2][j] = new PseudoPlayer(x -= deltaX, y -= deltaY,angle -= deltaAngle , player.getPlayerID(), player.getName(), player.getColor());
-            interList[1][j] = new PseudoPlayer(x -= deltaX, y -= deltaY, angle -= deltaAngle , player.getPlayerID(), player.getName(), player.getColor());
-            interList[0][j] = new PseudoPlayer(x -= deltaX, y -= deltaY, angle -= deltaAngle , player.getPlayerID(), player.getName(), player.getColor());
+        for (Map.Entry<Integer, GameState.Player> player : players.entrySet()) {
+
+            int deltaX;
+            int deltaY;
+            int deltaAngle;
+            int x, y, angle;
+            deltaX = (x = player.getValue().getX() - prevPlayers.get(player.getKey()).getX())/7;
+            deltaY = (y = player.getValue().getY() - prevPlayers.get(player.getKey()).getY())/7;
+            deltaAngle = ( angle = player.getValue().getAngle() - prevPlayers.get(player.getKey()).getAngle())/7;
+
+            interList[4][j] = new PseudoPlayer(x -= deltaX, y -= deltaY, angle -= deltaAngle , player.getValue().getName(), player.getValue().getColor());
+            interList[3][j] = new PseudoPlayer(x -= deltaX, y -= deltaY, angle -= deltaAngle , player.getValue().getName(), player.getValue().getColor());
+            interList[2][j] = new PseudoPlayer(x -= deltaX, y -= deltaY,angle -= deltaAngle , player.getValue().getName(), player.getValue().getColor());
+            interList[1][j] = new PseudoPlayer(x -= deltaX, y -= deltaY, angle -= deltaAngle , player.getValue().getName(), player.getValue().getColor());
+            interList[0][j] = new PseudoPlayer(x -= deltaX, y -= deltaY, angle -= deltaAngle , player.getValue().getName(), player.getValue().getColor());
         }
 
     }
