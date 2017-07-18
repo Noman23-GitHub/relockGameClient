@@ -9,8 +9,12 @@ import stateData.ClientState;
 import stateData.GameState;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.ImageObserver;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 @Component
@@ -43,8 +47,24 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
     int view_y = 0;
 
 
+    class LavaColor {
+        double speed = 60.0 / (50.0);
+        double green = 1;
+        double greenMax = 60;
+
+        Color getLavaColor() {
+            if (green > greenMax || (int) green < 1) speed *= -1;
+            green += speed;
+            //System.out.println((int)green);
+            return new Color(217, (int) green, 0);
+        }
+    }
+
+    LavaColor lavaColor = new LavaColor();
+
+
     @Scheduled(fixedDelay = 1000 / 300)
-    public void updateScreen() {
+    public void updateScreen() throws IOException {
 
         Graphics offgc;
         Image frame = screenModule.getJFrame().createImage(screenSettings.getWidth(), screenSettings.getHeight());
@@ -98,10 +118,11 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
             }
 
 
-
-
-            offgc.setColor(new Color(217, 4, 0));
+            offgc.setColor(lavaColor.getLavaColor());
             offgc.fillRect(0 - view_x, 0 - view_y, 1000, 1000);
+
+            //offgc.drawImage(ImageIO.read(new File("D:/frontLava.png")),0 - view_x,0 - view_y, screenModule.getJFrame());
+
             offgc.setColor(new Color(97, 4, 0));
             offgc.fillOval(100 - view_x, 100 - view_y, 800, 800);
 
@@ -126,7 +147,7 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
 
 
             if (selectedSkill != ClientState.CmdTypeEnum.CMD_NONE) {
-                offgc.setColor(new Color(179, 179, 179));
+                offgc.setColor(new Color(205, 205, 205));
                 offgc.fillRect(50, 50, 100, 30);
                 offgc.setColor(new Color(0, 0, 0));
             }
@@ -140,11 +161,12 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
                     break;
             }
 
+            offgc.setColor(new Color(205, 205, 205));
             offgc.drawString("My playerID = " + gs.getPlayerID(), 22, 100);
             offgc.drawString("ViewX = " + view_x, 22, 130);
             offgc.drawString("ViewY = " + view_y, 22, 160);
             offgc.drawString("MyX = " + myPlayer.getX(), 22, 190);
-            offgc.drawString("MyY = " + myPlayer.getY(), 22, 210);
+            offgc.drawString("MyY = " + myPlayer.getY(), 22, 220);
         }
 
         screenModule.updateScreen(frame);
