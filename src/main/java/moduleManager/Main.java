@@ -1,17 +1,17 @@
 package moduleManager;
 
 
-import exceptionModule.ExceptionModuleConfiguration;
 import ingameModule.IngameModuleConfiguration;
 import inputModule.InputModuleConfiguration;
-import loggerModule.LoggerModuleConfiguration;
 import networkModule.NetworkModuleConfiguration;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import screenModule.ScreenModuleConfiguration;
 
+import java.io.IOException;
+
 public class Main {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         AnnotationConfigApplicationContext context =
                 new AnnotationConfigApplicationContext();
 
@@ -23,5 +23,6 @@ public class Main {
         //context.register(LoggerModuleConfiguration.class);
         //context.register(ExceptionModuleConfiguration.class);
         context.refresh();
+
     }
 }

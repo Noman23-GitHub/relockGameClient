@@ -3,6 +3,7 @@ package ingameModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 import screenModule.ScreenModuleInterface;
 import screenModule.ScreenSettings;
 import stateData.ClientState;
@@ -12,10 +13,7 @@ import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.ImageObserver;
-import java.io.File;
 import java.io.IOException;
-import java.util.*;
 
 @Component
 public class IngameModule extends JFrame implements IngameModuleInterface {
@@ -121,9 +119,10 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
             offgc.setColor(lavaColor.getLavaColor());
             offgc.fillRect(0 - view_x, 0 - view_y, 1000, 1000);
 
-            //offgc.drawImage(ImageIO.read(new File("D:/frontLava.png")),0 - view_x,0 - view_y, screenModule.getJFrame());
 
-            offgc.setColor(new Color(97, 4, 0));
+            offgc.drawImage(ImageIO.read(ResourceUtils.getFile("classpath:images/frontLava.png")), 0 - view_x, 0 - view_y, screenModule.getJFrame());
+
+            offgc.setColor(new Color(86, 86, 90));
             offgc.fillOval(100 - view_x, 100 - view_y, 800, 800);
 
             java.util.List<GameState.Player> list = gs.getPlayerList();
@@ -136,6 +135,8 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
                     offgc.fillRect(object.getX() - view_x, object.getY() - view_y, 2, 2);
                 }
             }
+
+
             for (GameState.Player player : list) {
                 offgc.setColor(player.getColor());
                 offgc.fillOval(player.getX() - view_x, player.getY() - view_y, 50, 50);
