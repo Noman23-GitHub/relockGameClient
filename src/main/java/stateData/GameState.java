@@ -45,8 +45,8 @@ public class GameState implements Serializable {
 
         private static final long serialVersionUID = 25L;
 
-        int playerID;
-        String name;
+        private int playerID;
+        private String name;
         private Color color;
         private int angle;
         private int x;
