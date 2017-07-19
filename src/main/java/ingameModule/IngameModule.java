@@ -3,7 +3,6 @@ package ingameModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 import screenModule.ScreenModuleInterface;
 import screenModule.ScreenSettings;
 import stateData.ClientState;
@@ -13,15 +12,12 @@ import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-<<<<<<< HEAD
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.awt.image.ImageObserver;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-=======
-import java.io.IOException;
->>>>>>> upstream/master
 
 @Component
 public class IngameModule extends JFrame implements IngameModuleInterface {
@@ -34,12 +30,13 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
     @Autowired
     ScreenSettings screenSettings;
 
+
     GameState gs;
     GameState previousGs;
-    List<GameState.Player> playerList;
-    List<GameState.Player> prPlayerList;
-    PseudoPlayer[][] interList;
+    Map<Integer, GameState.Player> prevPlayers;
     int render = 0;
+    Map<Integer, Double[]> deltas;
+    int numberOIF = 5;
 
     private class PseudoPlayer{
         int x, y, angle;
@@ -48,8 +45,6 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
 
         PseudoPlayer(int x, int y, int angle, String name, Color color){this.angle = angle; this.x = x; this.y = y; this.name = name; this.color = color; }
     }
-
-
     public void setSelectedSkill(ClientState.CmdTypeEnum selectedSkill) {
         this.selectedSkill = selectedSkill;
     }
@@ -62,31 +57,26 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
         gs = gameState;
 
 
-        playerList = gs.getPlayerList();
-        prPlayerList = previousGs.getPlayerList();
-        Map<Integer, GameState.Player> players = playerList.stream().collect(Collectors.toMap(GameState.Player::getPlayerID, Function.identity()));
-        Map<Integer, GameState.Player> prevPlayers = prPlayerList.stream().collect(Collectors.toMap(GameState.Player::getPlayerID, Function.identity()));
-        render = 0;
-        interList = new PseudoPlayer[5][gs.getPlayerList().size()];
-        int j = 0;
-        //for (GameState.Player player: playerList) {
+        if(previousGs != null) {
 
-        for (Map.Entry<Integer, GameState.Player> player : players.entrySet()) {
+            Map<Integer, GameState.Player> players = gs.getPlayerList().
+                    stream().collect(Collectors.
+                    toMap(GameState.Player::getPlayerID, Function.identity()));
+            prevPlayers = previousGs.getPlayerList().
+                    stream().collect(Collectors.
+                    toMap(GameState.Player::getPlayerID, Function.identity()));
+            int i = 0;
+            deltas = new HashMap<>();
+            for (Map.Entry<Integer, GameState.Player> player : players.entrySet()) {
 
-            int deltaX;
-            int deltaY;
-            int deltaAngle;
-            int x, y, angle;
-            deltaX = (x = player.getValue().getX() - prevPlayers.get(player.getKey()).getX())/7;
-            deltaY = (y = player.getValue().getY() - prevPlayers.get(player.getKey()).getY())/7;
-            deltaAngle = ( angle = player.getValue().getAngle() - prevPlayers.get(player.getKey()).getAngle())/7;
-
-            interList[4][j] = new PseudoPlayer(x -= deltaX, y -= deltaY, angle -= deltaAngle , player.getValue().getName(), player.getValue().getColor());
-            interList[3][j] = new PseudoPlayer(x -= deltaX, y -= deltaY, angle -= deltaAngle , player.getValue().getName(), player.getValue().getColor());
-            interList[2][j] = new PseudoPlayer(x -= deltaX, y -= deltaY,angle -= deltaAngle , player.getValue().getName(), player.getValue().getColor());
-            interList[1][j] = new PseudoPlayer(x -= deltaX, y -= deltaY, angle -= deltaAngle , player.getValue().getName(), player.getValue().getColor());
-            interList[0][j] = new PseudoPlayer(x -= deltaX, y -= deltaY, angle -= deltaAngle , player.getValue().getName(), player.getValue().getColor());
+                if(prevPlayers.get(player.getKey()) != null) { //System.out.println("AFTER player #"+ player.getKey()+" : x = "+player.getValue().getX() + ", y = "+ player.getValue().getY() );
+                    Double[] delta = {(player.getValue().getX() - prevPlayers.get(player.getKey()).getX()) / (double) numberOIF,
+                            (player.getValue().getY() - prevPlayers.get(player.getKey()).getY()) / (double) numberOIF};
+                    deltas.put(player.getKey(), delta);
+                }
+            }
         }
+        render = 0;
 
     }
 
@@ -111,7 +101,7 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
     LavaColor lavaColor = new LavaColor();
 
 
-    @Scheduled(fixedDelay = 1000 / 300)
+    @Scheduled(fixedDelay = 1000 / 60)
     public void updateScreen() throws IOException {
 
         Graphics offgc;
@@ -120,12 +110,6 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
         offgc.setFont(new Font("Century Gothic", Font.BOLD, 18));
 
 
-<<<<<<< HEAD
-
-        offgc.setFont(new Font("Century Gothic", Font.BOLD, 18));
-
-=======
->>>>>>> upstream/master
         if (gs != null) {
 
             GameState.Player myPlayer = null;
@@ -175,13 +159,12 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
             offgc.setColor(lavaColor.getLavaColor());
             offgc.fillRect(0 - view_x, 0 - view_y, 1000, 1000);
 
+            //offgc.drawImage(ImageIO.read(new File("D:/frontLava.png")),0 - view_x,0 - view_y, screenModule.getJFrame());
 
-            offgc.drawImage(ImageIO.read(ResourceUtils.getFile("classpath:images/frontLava.png")), 0 - view_x, 0 - view_y, screenModule.getJFrame());
-
-            offgc.setColor(new Color(86, 86, 90));
+            offgc.setColor(new Color(97, 4, 0));
             offgc.fillOval(100 - view_x, 100 - view_y, 800, 800);
 
-
+            java.util.List<GameState.Player> list = gs.getPlayerList();
             java.util.List<GameState.GameObject> objects = gs.getGameObjectList();
             for (GameState.GameObject object : objects) {
                 if (object.getType() == GameState.GameObject.ObjectTypeEnum.TYPE_WALL) {
@@ -191,21 +174,38 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
                     offgc.fillRect(object.getX() - view_x, object.getY() - view_y, 2, 2);
                 }
             }
-<<<<<<< HEAD
-=======
+            //double x = 0, y = 0;
+            if (deltas != null && render < numberOIF) {
+                for (Map.Entry<Integer, GameState.Player> player : prevPlayers.entrySet()) {
 
 
-            for (GameState.Player player : list) {
-                offgc.setColor(player.getColor());
-                offgc.fillOval(player.getX() - view_x, player.getY() - view_y, 50, 50);
-                offgc.setColor(new Color(68, 255, 0));
-                offgc.fillRect(player.getX() - view_x, player.getY() - view_y, 2, 2);
-                offgc.setColor(new Color(205, 205, 205));
-                offgc.drawString(player.getName(), player.getX() + 5 - view_x, player.getY() - 5 - view_y);
+                    if(deltas.get(player.getKey()) != null ) {
+                        offgc.setColor(player.getValue().getColor());
+                        offgc.fillOval(player.getValue().getX() + (int) ((deltas.get(player.getKey())[0]) * render) - view_x,
+                                player.getValue().getY() + (int) ((deltas.get(player.getKey())[1]) * render) - view_y,
+                                50, 50);
+                        offgc.setColor(new Color(68, 255, 0));
+                        offgc.fillRect(player.getValue().getX() + (int) ((deltas.get(player.getKey())[0]) * render) - view_x,
+                                player.getValue().getY() + (int) ((deltas.get(player.getKey())[1]) * render) - view_y,
+                                2, 2);
+                        offgc.setColor(new Color(205, 205, 205));
+                        offgc.drawString(player.getValue().getName(), player.getValue().getX() + (int) (deltas.get(player.getKey())[0] * render) - view_x + 5,
+                                player.getValue().getY() + (int) (deltas.get(player.getKey())[1] * render) - view_y - 5);
+                    }
+                }
             }
+            else
+                for (GameState.Player player : list) {
+                    offgc.setColor(player.getColor());
+                    offgc.fillOval(player.getX() - view_x, player.getY() - view_y, 50, 50);
+                    offgc.setColor(new Color(68, 255, 0));
+                    offgc.fillRect(player.getX() - view_x, player.getY() - view_y, 2, 2);
+                    offgc.setColor(new Color(205, 205, 205));
+                    offgc.drawString(player.getName(), player.getX() + 5 - view_x, player.getY() - 5 - view_y);
+                }
+            render++;
 
 
->>>>>>> upstream/master
             if (selectedSkill != ClientState.CmdTypeEnum.CMD_NONE) {
                 offgc.setColor(new Color(205, 205, 205));
                 offgc.fillRect(50, 50, 100, 30);
@@ -220,42 +220,6 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
                     offgc.drawString("SPEEL 2", 22 + 50, 22 + 50);
                     break;
             }
-<<<<<<< HEAD
-            if (gs != null && previousGs != null) {
-
-
-                if (render == 0) {
-                    for (GameState.Player player : prPlayerList) {
-                        offgc.setColor(player.getColor());
-                        offgc.fillOval(player.getX(), player.getY(), 50, 50);
-                        offgc.setColor(new Color(68, 255, 0));
-                        offgc.fillRect(player.getX(), player.getY(), 2, 2);
-                        offgc.setColor(new Color(205, 205, 205));
-                        offgc.drawString(player.getName(), player.getX() + 5, player.getY() - 5);
-                    }
-                }
-                else if (render == 6) {
-                    for (GameState.Player player : prPlayerList) {
-                        offgc.setColor(player.getColor());
-                        offgc.fillOval(player.getX(), player.getY(), 50, 50);
-                        offgc.setColor(new Color(68, 255, 0));
-                        offgc.fillRect(player.getX(), player.getY(), 2, 2);
-                        offgc.setColor(new Color(205, 205, 205));
-                        offgc.drawString(player.getName(), player.getX() + 5, player.getY() - 5);
-                    }
-                }
-                else
-                    for (PseudoPlayer player : interList[render - 1]) {
-                        offgc.setColor(player.color);
-                        offgc.fillOval(player.x, player.y, 50, 50);
-                        offgc.setColor(new Color(68, 255, 0));
-                        offgc.fillRect(player.x, player.y, 2, 2);
-                        offgc.setColor(new Color(205, 205, 205));
-                        offgc.drawString(player.name, player.x + 5, player.y - 5);
-                    }
-                    render++;
-            }
-=======
 
             offgc.setColor(new Color(205, 205, 205));
             offgc.drawString("My playerID = " + gs.getPlayerID(), 22, 100);
@@ -263,8 +227,8 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
             offgc.drawString("ViewY = " + view_y, 22, 160);
             offgc.drawString("MyX = " + myPlayer.getX(), 22, 190);
             offgc.drawString("MyY = " + myPlayer.getY(), 22, 220);
->>>>>>> upstream/master
         }
+
         screenModule.updateScreen(frame);
     }
 }
