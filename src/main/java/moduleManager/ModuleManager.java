@@ -52,4 +52,8 @@ public class ModuleManager implements ModuleManagerInterface {
     public void sendSelectedSkill(ClientState.CmdTypeEnum selectedSkill) {
         ingameModule.setSelectedSkill(selectedSkill);
     }
+
+    public int[] getViewXY() {
+        return ingameModule.getViewXY();
+    }
 }

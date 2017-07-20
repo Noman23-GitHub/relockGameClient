@@ -33,6 +33,10 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
         this.selectedSkill = selectedSkill;
     }
 
+    public int[] getViewXY() {
+        return new int[]{view_x, view_y};
+    }
+
     ClientState.CmdTypeEnum selectedSkill = ClientState.CmdTypeEnum.CMD_NONE;
 
 
@@ -53,7 +57,6 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
         Color getLavaColor() {
             if (green > greenMax || (int) green < 1) speed *= -1;
             green += speed;
-            //System.out.println((int)green);
             return new Color(217, (int) green, 0);
         }
     }
@@ -131,6 +134,12 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
                 if (object.getType() == GameState.GameObject.ObjectTypeEnum.TYPE_WALL) {
                     offgc.setColor(new Color(140, 68, 12));
                     offgc.fillRect(object.getX() - view_x, object.getY() - view_y, object.getWidth(), object.getHeigth());
+                    offgc.setColor(new Color(68, 255, 0));
+                    offgc.fillRect(object.getX() - view_x, object.getY() - view_y, 2, 2);
+                }
+                if (object.getType() == GameState.GameObject.ObjectTypeEnum.TYPE_SPEEL) {
+                    offgc.setColor(new Color(68, 255, 0));
+                    offgc.fillOval(object.getX() - view_x, object.getY() - view_y, 20, 20);
                     offgc.setColor(new Color(68, 255, 0));
                     offgc.fillRect(object.getX() - view_x, object.getY() - view_y, 2, 2);
                 }

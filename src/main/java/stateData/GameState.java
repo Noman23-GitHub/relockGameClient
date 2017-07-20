@@ -89,6 +89,8 @@ public class GameState implements Serializable {
             TYPE_SPEEL
         }
 
+        private int id;
+        private int owner;
         private ObjectTypeEnum type;
         private int x;
         private int y;

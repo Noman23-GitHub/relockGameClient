@@ -11,4 +11,6 @@ public interface ModuleManagerInterface {
     public void transferLogMessage(String message);
 
     public void sendSelectedSkill(ClientState.CmdTypeEnum selectedSkill);
+
+    public int[] getViewXY();
 }
