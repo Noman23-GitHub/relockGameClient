@@ -3,7 +3,6 @@ package ingameModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 import screenModule.ScreenModuleInterface;
 import screenModule.ScreenSettings;
 import stateData.ClientState;
@@ -13,7 +12,12 @@ import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.ImageObserver;
+import java.io.File;
 import java.io.IOException;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class IngameModule extends JFrame implements IngameModuleInterface {
@@ -26,9 +30,21 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
     @Autowired
     ScreenSettings screenSettings;
 
+
     GameState gs;
+    GameState previousGs;
+    Map<Integer, GameState.Player> prevPlayers;
+    int render = 0;
+    Map<Integer, Double[]> deltas;
+    int numberOIF = 5;
 
+    private class PseudoPlayer{
+        int x, y, angle;
+        Color color;
+        String name;
 
+        PseudoPlayer(int x, int y, int angle, String name, Color color){this.angle = angle; this.x = x; this.y = y; this.name = name; this.color = color; }
+    }
     public void setSelectedSkill(ClientState.CmdTypeEnum selectedSkill) {
         this.selectedSkill = selectedSkill;
     }
@@ -41,7 +57,31 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
 
 
     public void setGameState(GameState gameState) {
+        previousGs = gs;
         gs = gameState;
+
+
+        if(previousGs != null) {
+
+            Map<Integer, GameState.Player> players = gs.getPlayerList().
+                    stream().collect(Collectors.
+                    toMap(GameState.Player::getPlayerID, Function.identity()));
+            prevPlayers = previousGs.getPlayerList().
+                    stream().collect(Collectors.
+                    toMap(GameState.Player::getPlayerID, Function.identity()));
+            int i = 0;
+            deltas = new HashMap<>();
+            for (Map.Entry<Integer, GameState.Player> player : players.entrySet()) {
+
+                if(prevPlayers.get(player.getKey()) != null) { //System.out.println("AFTER player #"+ player.getKey()+" : x = "+player.getValue().getX() + ", y = "+ player.getValue().getY() );
+                    Double[] delta = {(player.getValue().getX() - prevPlayers.get(player.getKey()).getX()) / (double) numberOIF,
+                            (player.getValue().getY() - prevPlayers.get(player.getKey()).getY()) / (double) numberOIF};
+                    deltas.put(player.getKey(), delta);
+                }
+            }
+        }
+        render = 0;
+
     }
 
 
@@ -64,7 +104,7 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
     LavaColor lavaColor = new LavaColor();
 
 
-    @Scheduled(fixedDelay = 1000 / 300)
+    @Scheduled(fixedDelay = 1000 / 60)
     public void updateScreen() throws IOException {
 
         Graphics offgc;
@@ -122,10 +162,9 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
             offgc.setColor(lavaColor.getLavaColor());
             offgc.fillRect(0 - view_x, 0 - view_y, 1000, 1000);
 
+            //offgc.drawImage(ImageIO.read(new File("D:/frontLava.png")),0 - view_x,0 - view_y, screenModule.getJFrame());
 
-            offgc.drawImage(ImageIO.read(ResourceUtils.getFile("classpath:images/frontLava.png")), 0 - view_x, 0 - view_y, screenModule.getJFrame());
-
-            offgc.setColor(new Color(86, 86, 90));
+            offgc.setColor(new Color(97, 4, 0));
             offgc.fillOval(100 - view_x, 100 - view_y, 800, 800);
 
             java.util.List<GameState.Player> list = gs.getPlayerList();
@@ -144,16 +183,36 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
                     offgc.fillRect(object.getX() - view_x, object.getY() - view_y, 2, 2);
                 }
             }
+            //double x = 0, y = 0;
+            if (deltas != null && render < numberOIF) {
+                for (Map.Entry<Integer, GameState.Player> player : prevPlayers.entrySet()) {
 
 
-            for (GameState.Player player : list) {
-                offgc.setColor(player.getColor());
-                offgc.fillOval(player.getX() - view_x, player.getY() - view_y, 50, 50);
-                offgc.setColor(new Color(68, 255, 0));
-                offgc.fillRect(player.getX() - view_x, player.getY() - view_y, 2, 2);
-                offgc.setColor(new Color(205, 205, 205));
-                offgc.drawString(player.getName(), player.getX() + 5 - view_x, player.getY() - 5 - view_y);
+                    if(deltas.get(player.getKey()) != null ) {
+                        offgc.setColor(player.getValue().getColor());
+                        offgc.fillOval(player.getValue().getX() + (int) ((deltas.get(player.getKey())[0]) * render) - view_x,
+                                player.getValue().getY() + (int) ((deltas.get(player.getKey())[1]) * render) - view_y,
+                                50, 50);
+                        offgc.setColor(new Color(68, 255, 0));
+                        offgc.fillRect(player.getValue().getX() + (int) ((deltas.get(player.getKey())[0]) * render) - view_x,
+                                player.getValue().getY() + (int) ((deltas.get(player.getKey())[1]) * render) - view_y,
+                                2, 2);
+                        offgc.setColor(new Color(205, 205, 205));
+                        offgc.drawString(player.getValue().getName(), player.getValue().getX() + (int) (deltas.get(player.getKey())[0] * render) - view_x + 5,
+                                player.getValue().getY() + (int) (deltas.get(player.getKey())[1] * render) - view_y - 5);
+                    }
+                }
             }
+            else
+                for (GameState.Player player : list) {
+                    offgc.setColor(player.getColor());
+                    offgc.fillOval(player.getX() - view_x, player.getY() - view_y, 50, 50);
+                    offgc.setColor(new Color(68, 255, 0));
+                    offgc.fillRect(player.getX() - view_x, player.getY() - view_y, 2, 2);
+                    offgc.setColor(new Color(205, 205, 205));
+                    offgc.drawString(player.getName(), player.getX() + 5 - view_x, player.getY() - 5 - view_y);
+                }
+            render++;
 
 
             if (selectedSkill != ClientState.CmdTypeEnum.CMD_NONE) {
