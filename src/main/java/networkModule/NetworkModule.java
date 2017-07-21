@@ -14,6 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
+import java.util.Random;
 
 
 @Component
@@ -49,6 +50,7 @@ public class NetworkModule implements NetworkModuleInterface {
     public void sendClientState(ClientState clientState) {
         try {
             out.writeObject(clientState);
+            System.out.println("Some: " + (new Random().nextInt(1000)));
         } catch (Exception e) {
             e.printStackTrace();
         }

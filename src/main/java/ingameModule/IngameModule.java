@@ -50,14 +50,16 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
 
 
     class LavaColor {
-        double speed = 60.0 / (50.0);
+        double speed = 60.0 / (20.0);
         double green = 1;
         double greenMax = 60;
 
         Color getLavaColor() {
             if (green > greenMax || (int) green < 1) speed *= -1;
             green += speed;
-            return new Color(217, (int) green, 0);
+            if (green < 0) green = 0;
+            if (green > 255) green = 255;
+            return new Color(180, (int) green, 0);
         }
     }
 
@@ -125,8 +127,8 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
 
             offgc.drawImage(ImageIO.read(ResourceUtils.getFile("classpath:images/frontLava.png")), 0 - view_x, 0 - view_y, screenModule.getJFrame());
 
-            offgc.setColor(new Color(86, 86, 90));
-            offgc.fillOval(100 - view_x, 100 - view_y, 800, 800);
+            //offgc.setColor(new Color(86, 86, 90));
+            //offgc.fillOval(100 - view_x, 100 - view_y, 800, 800);
 
             java.util.List<GameState.Player> list = gs.getPlayerList();
             java.util.List<GameState.GameObject> objects = gs.getGameObjectList();
@@ -138,7 +140,7 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
                     offgc.fillRect(object.getX() - view_x, object.getY() - view_y, 2, 2);
                 }
                 if (object.getType() == GameState.GameObject.ObjectTypeEnum.TYPE_SPEEL) {
-                    offgc.setColor(new Color(68, 255, 0));
+                    offgc.setColor(lavaColor.getLavaColor());
                     offgc.fillOval(object.getX() - view_x, object.getY() - view_y, 20, 20);
                     offgc.setColor(new Color(68, 255, 0));
                     offgc.fillRect(object.getX() - view_x, object.getY() - view_y, 2, 2);
@@ -147,8 +149,11 @@ public class IngameModule extends JFrame implements IngameModuleInterface {
 
 
             for (GameState.Player player : list) {
+
                 offgc.setColor(player.getColor());
                 offgc.fillOval(player.getX() - view_x, player.getY() - view_y, 50, 50);
+                offgc.drawImage(ImageIO.read(ResourceUtils.getFile("classpath:images/player.png")), player.getX() - view_x - 5, player.getY() - view_y - 5, screenModule.getJFrame());
+
                 offgc.setColor(new Color(68, 255, 0));
                 offgc.fillRect(player.getX() - view_x, player.getY() - view_y, 2, 2);
                 offgc.setColor(new Color(205, 205, 205));

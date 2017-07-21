@@ -18,6 +18,7 @@ public class InputModuleMouseListener implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == 1) {
             inputModule.sendMouseClick(new int[]{e.getX(), e.getY()});
+            System.out.println("Clicked");
         }
     }
 

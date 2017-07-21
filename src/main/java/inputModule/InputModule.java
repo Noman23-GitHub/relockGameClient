@@ -45,6 +45,7 @@ public class InputModule implements InputModuleInterface {
         int viewXY[] = moduleManager.getViewXY();
 
         if (selectedSkill != ClientState.CmdTypeEnum.CMD_NONE) {
+            System.out.println("Casted");
             moduleManager.transferClientState(new ClientState(move, selectedSkill, new int[]{m_pos[0] + viewXY[0], m_pos[1] + viewXY[1]}));
             selectKeyPressed(ClientState.CmdTypeEnum.CMD_NONE);
         }
